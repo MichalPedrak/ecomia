@@ -126,7 +126,7 @@ const cities = ref([
 
 ]);
 
-watch(selectedCity, async ( newPeriod, oldPeriod) => {
+watch(selectedCity, async ( newPeriod, oldPeriod) => { 
     console.log(newPeriod);
     let newDates = ref([]);
     let newPrices = ref([]);

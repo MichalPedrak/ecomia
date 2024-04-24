@@ -98,10 +98,7 @@ defineProps({
 }
 .product-image{
     height: 100px;
-    //margin: 20px auto;
-    //width: 100%;
-    object-fit: contain
-;
+    object-fit: contain;
 }
 .product-ean{
     color: #6b7280;
