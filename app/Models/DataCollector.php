@@ -19,10 +19,10 @@ class DataCollector extends Model
     }
 
 
-    public function collect()
+    public static function collect()
     { // hasOne hasMany belongsTo blongsToMany
 
-        ini_set('max_execution_time', 121);
+        ini_set('max_execution_time', 0);
 
         ini_set('memory_limit', 20480000000);
 
