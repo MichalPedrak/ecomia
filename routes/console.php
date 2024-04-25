@@ -8,4 +8,4 @@ use App\Models\DataCollector;
 
 Artisan::command('collect data', function () {
     DataCollector::collect();
-})->purpose('Delete recent users')->everyMinute();
+})->purpose('Delete recent users')->hourly();
