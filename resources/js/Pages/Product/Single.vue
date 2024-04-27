@@ -46,11 +46,11 @@ dataProp.forEach(item => {
     const month = monthNames[date.getMonth()]; // Adding 1 because months are zero-indexed
     // const year = date.getFullYear();
 
-    // const hours = date.getHours();
-    // const minutes = date.getMinutes();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
     // const seconds = date.getSeconds();
 
-    const formattedDate = `${day} ${month} `;
+    const formattedDate = `${day} ${month} - ${hours} ${minutes} `;
     dates.value.push(formattedDate); // Assuming quantity is a string, convert it to an integer if needed
 
 });
