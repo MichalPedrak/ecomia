@@ -50,7 +50,7 @@ dataProp.forEach(item => {
     const minutes = date.getMinutes();
     // const seconds = date.getSeconds();
 
-    const formattedDate = `${day} ${month} - ${hours} ${minutes} `;
+    const formattedDate = `${day} ${month} - ${hours}:${minutes} `;
     dates.value.push(formattedDate); // Assuming quantity is a string, convert it to an integer if needed
 
 });
@@ -147,9 +147,11 @@ watch(selectedCity, async ( newPeriod, oldPeriod) => {
                         const date = new Date(item.created_at);
                         const day = date.getDate();
                         const month = monthNames[date.getMonth()]; 
-            
+                        const hours = date.getHours();
+                        const minutes = date.getMinutes();
+                        // const seconds = date.getSeconds();
 
-                        const formattedDate = `${day} ${month} `;
+                        const formattedDate = `${day} ${month} - ${hours}:${minutes} `;
                         newDates.value.push(formattedDate); 
 
                 });
