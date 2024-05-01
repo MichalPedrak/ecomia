@@ -32,6 +32,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function products(){ // hasOne hasMany belongsTo blongsToMany
+        return $this->hasMany(Product::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

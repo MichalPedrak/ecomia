@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use \Auth;
 
 class ProductController extends Controller
 {
@@ -17,7 +18,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): Response
     {
-
+        $userId = Auth::id();
 
         return Inertia::render('Product/Index', [
 //            'products' => Product::all()->take(10000),
@@ -31,11 +32,19 @@ class ProductController extends Controller
 
 //            'products' => Product::with('DataCollector')->limit(1000)->get(),
             // 'products' => Product::with('DataCollector')->latest()->limit(1000)->get(),
+            // 'products' => DB::table('products')
+            //     ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors  GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+            //     ->select('products.*', 'dc1.quantity')
+            //     ->get(),
             'products' => DB::table('products')
-                ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors  GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
-                ->select('products.*', 'dc1.quantity')
-                ->get(),
-            'data' => DataCollector::where('id', ">", 1)->limit(1)->latest('created_at')->get(),
+                ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
+                ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = 1) as product_user"), 'products.id', '=', 'product_user.product_id')
+                ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                ->orderby('products.id', 'DESC')
+                ->get(),    
+
+       
         ]);
     }
 
@@ -51,6 +60,25 @@ class ProductController extends Controller
 //            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
 //            'status' => session('status'),
         ]);
+    }
+
+    public function watched(Request $request): Response
+    {    $userId = Auth::id();
+
+
+        return Inertia::render('Product/Watched', [
+
+                    'products' => DB::table('products')
+                    ->where('user_id', '?')
+                    ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                    ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
+                    // ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = ?) as product_user"), 'products.id', '=', 'product_user.product_id')
+                    ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                    ->setBindings([$userId])
+                    ->get(),   
+                       
+                    ]);
+
     }
     /**
      * Show the form for creating a new resource.

@@ -5,26 +5,22 @@ import {Head} from "@inertiajs/vue3";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-
-
 defineProps({
     products: {
         type: Object,
     },
-    data: {
-        type: Object,
-    },
+
 
 });
 function productUser(id, state){
 
-     if(!id) return ;
+        if(!id) return ;
 
-     let method = state != null ? 'destroy' : 'add';
+        let method = state != null ? 'destroy' : 'add';
 
-     
 
-    axios.post('/produkty/obserwowane/' + method + '/' + id, {
+
+        axios.post('/produkty/obserwowane/' + method + '/' + id, {
             headers: {
                 'Content-type': 'application/json',
             }
@@ -37,29 +33,19 @@ function productUser(id, state){
         });
 
 
+
 }
 
-function addWeek(txtDate){
-    var today = new Date();
-    var nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-
-    //If nextWeek is greater (later) than the value of the input date, alert...
-    if (nextWeek < Date.parse(txtDate)) {
-        return 'Nowosc';
-    }
-
-
-    }
 
 </script>
 
 
 <template>
-    <Head title="Produkty" />
+    <Head title="Obserwowane" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Produkty</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Obserwowane</h2>
         </template>
 
         <div class="py-12">
@@ -72,9 +58,9 @@ function addWeek(txtDate){
                         <Column field="watched" header="Obserwowane">
                             <template #body="slotProps">
                                 <span @click="productUser(slotProps.data.id,  slotProps.data.user_id)" class="product-watched"  v-html='slotProps.data.user_id != null ? `<input type="checkbox" checked >` : `<input type="checkbox" >` '>
-                                    
+
                                 </span>
-                               
+
                             </template>
                         </Column>
                         <Column field="category" header="Kategoria">
@@ -85,7 +71,6 @@ function addWeek(txtDate){
                         </Column>
                         <Column field="image" header="Zdjęcie">
                             <template #body="slotProps">
-                                {{  addWeek(slotProps.data.created_at) }}
                                 <img  :src="`${slotProps.data.image}`" :alt="slotProps.data.image" class="w-6rem border-round product-image" />
                             </template>
                         </Column>

@@ -16,14 +16,17 @@ class Product extends Model
         'image',
         'category',
     ];
-    public function dataCollector(){ // hasOne hasMany belongsTo blongsToMany
+    public function dataCollectors(){ // hasOne hasMany belongsTo blongsToMany
         return $this->hasMany(DataCollector::class, 'product_ean', 'ean')->latest();
     }
-    public function lastDataCollector()
-    {
-        return $this->hasOne(DataCollector::class, 'product_ean', 'ean')->latest();
-
+    public function users(){ // hasOne hasMany belongsTo blongsToMany
+        return $this->belongsToMany(User::class);
     }
+    // public function lastDataCollector()
+    // {
+    //     return $this->hasOne(DataCollector::class, 'product_ean', 'ean')->latest();
+
+    // }
 
     public function import()
     { // hasOne hasMany belongsTo blongsToMany
