@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
 });
 Route::get('/obserwowane', [ProductController::class, 'watched'])->name('product.watched');
 Route::get('/produkty', [ProductController::class, 'index'])->name('product.index');
+Route::get('/produkty/kategoria/{category}/{subcategory?}/{subsubcategory?}', [ProductController::class, 'category'])
+    ->name('product.category');
 Route::get('/produkty/import', [ProductController::class, 'import'])->name('product.import');
 Route::get('/produkty/collect', [DataCollector::class, 'collect'])->name('data_collector.collect');
 Route::get('/produkty/{ean}', [ProductController::class, 'show'])->name('product.show');

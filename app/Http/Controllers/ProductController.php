@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DataCollector;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,66 @@ class ProductController extends Controller
             //     ->select('products.*', 'dc1.quantity')
             //     ->get(),
             'products' => DB::table('products')
+                ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
+                ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = 1) as product_user"), 'products.id', '=', 'product_user.product_id')
+                ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                ->orderby('products.id', 'DESC')
+                ->get(),    
+
+       
+        ]);
+    }
+    public function category(Request $request, $category , $subcategory = null, $subsubcategory = null): Response
+    {
+
+       
+
+        $userId = Auth::id();
+        $whereIn = [];
+
+
+        
+        if($subsubcategory){
+
+            $getSubSubCategory = ProductCategory::where('slug', $subsubcategory)->first();
+            $whereIn = [$getSubSubCategory->id];
+
+        } else if ($subcategory){
+         
+            $getSubCategories = ProductCategory::where('slug', $subcategory)->first();
+            $getSubSubCategories = ProductCategory::where('parent_category', $getSubCategories->id)->get();
+            $whereIn = [$getSubCategories->id];
+    
+            foreach($getSubSubCategories as $s){
+                array_push($whereIn , $s->id);
+            }
+
+        } else {
+            $getCategory = ProductCategory::where('slug', $category)->first();
+            $getSubCategories = ProductCategory::where('parent_category', $getCategory->id)->get();
+    
+            $whereIn = [$getCategory->id];
+    
+            foreach($getSubCategories as $s){
+                array_push($whereIn , $s->id);
+    
+                $getSubSubCategories = ProductCategory::where('parent_category', $s->id)->get();
+    
+                foreach($getSubSubCategories as $ss){
+                    array_push($whereIn , $ss->id);
+                     var_dump($ss->id);
+                }
+    
+            }
+        }
+
+
+
+        return Inertia::render('Product/Index', [
+
+            'products' => DB::table('products')
+                ->whereIn('category', $whereIn)
                 ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
                 // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
                 ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = 1) as product_user"), 'products.id', '=', 'product_user.product_id')

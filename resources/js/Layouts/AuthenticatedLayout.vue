@@ -7,6 +7,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
+
 const showingNavigationDropdown = ref(false);
 </script>
 
@@ -37,6 +38,12 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('product.index')" :active="route().current('product.index')">
                                     Produkty
+                                </NavLink>
+
+                            </div>
+                            <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                                <NavLink :href="route('product.category', { category: 'makijaz', subcategory: 'makij'})"  :active="route().current('product.category')">
+                                    Perfumy
                                 </NavLink>
 
                             </div>
