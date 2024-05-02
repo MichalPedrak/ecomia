@@ -31,9 +31,8 @@ class Product extends Model
     public function import()
     { // hasOne hasMany belongsTo blongsToMany
 
-        ini_set('max_execution_time', 121);
-
-        ini_set('memory_limit', 20480000000);
+        ini_set('max_execution_time', 3600);
+        ini_set('memory_limit', '5604800M');
 
         $url = 'https://mpstrony.pl/feed_primavera.xml';
         header("Content-Type: text/plain");
@@ -43,24 +42,27 @@ class Product extends Model
 
         $counter = 0;
         foreach ($xml as $product) {
-            if($counter > 10000){
-                exit();
-            }
+        
             $counter++;
             $name = $product->name[0];
             $eans = $product->eans->ean;
             $image = $product->image[0];
             $category = $product->categories->category;
 
-            Product::create([
-                'name' => $name,
-                'ean' => $eans,
-                'image' => $image,
-                'category' => $category,
-            ]);
-        }
+            // $exist = Product::where('ean', $eans)->first();
 
-        // add to database
+            // if(!$exist){
+                Product::firstOrcreate(['ean', $eans],[
+                    'name' => $name,
+                    'ean' => $eans,
+                    'image' => $image,
+                    'category' => $category,
+                ]);
+            // } 
+          
+            
+           
+        }
 
 
 

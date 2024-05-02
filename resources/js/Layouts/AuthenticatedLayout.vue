@@ -32,7 +32,7 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Kokpit
-                                </NavLink>
+                                </NavLink> 
 
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -43,7 +43,7 @@ const showingNavigationDropdown = ref(false);
                             </div>
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('product.category', { category: 'makijaz', subcategory: 'makij'})"  :active="route().current('product.category')">
-                                    Perfumy
+                                    Perfumy 
                                 </NavLink>
 
                             </div>

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use \Auth;
+use Symfony\Component\Console\Input\Input;
+use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -20,6 +22,18 @@ class ProductController extends Controller
     public function index(Request $request): Response
     {
         $userId = Auth::id();
+        // $page =  $request->input('page') == NULL ? 0 : $request->input('page');
+        // $limit = $request->input('limit') == NULL  ? 20 : $request->input('limit');
+
+        // if($page != 0){
+        //     $offset = ($page - 1 ) * $limit;
+        // } else {
+        //     $offset = 0;
+        // }
+      
+        // var_dump($page, $limit, $offset);
+   
+
 
         return Inertia::render('Product/Index', [
 //            'products' => Product::all()->take(10000),
@@ -38,12 +52,20 @@ class ProductController extends Controller
             //     ->select('products.*', 'dc1.quantity')
             //     ->get(),
             'products' => DB::table('products')
-                ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
                 // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
-                ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = 1) as product_user"), 'products.id', '=', 'product_user.product_id')
-                ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id =" . $userId . ") as product_user"), 'products.id', '=', 'product_user.product_id')
+                ->select('products.*',  'product_user.user_id')
                 ->orderby('products.id', 'DESC')
-                ->get(),    
+                ->get(),
+                // 'products' => DB::table('products')
+                // ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                // // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
+                // ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id =" . $userId . ") as product_user"), 'products.id', '=', 'product_user.product_id')
+                // ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                // ->orderby('products.id', 'DESC')
+                // ->limit($limit)->skip($offset)->get(),
+          
+
 
        
         ]);
@@ -86,7 +108,7 @@ class ProductController extends Controller
     
                 foreach($getSubSubCategories as $ss){
                     array_push($whereIn , $ss->id);
-                     var_dump($ss->id);
+                  
                 }
     
             }
@@ -96,16 +118,15 @@ class ProductController extends Controller
 
         return Inertia::render('Product/Index', [
 
-            'products' => DB::table('products')
+            'products' =>  DB::table('products')
                 ->whereIn('category', $whereIn)
-                ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                // ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
                 // ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
                 ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = 1) as product_user"), 'products.id', '=', 'product_user.product_id')
-                ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                // ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                ->select('products.*',  'product_user.user_id')
                 ->orderby('products.id', 'DESC')
                 ->get(),    
-
-       
         ]);
     }
 
@@ -131,10 +152,10 @@ class ProductController extends Controller
 
                     'products' => DB::table('products')
                     ->where('user_id', '?')
-                    ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
+                    // ->leftJoin(DB::raw('(SELECT dc1.* FROM data_collectors dc1 JOIN (SELECT product_ean, MAX(created_at) AS max_created_at FROM data_collectors GROUP BY product_ean) dc2 ON dc1.product_ean = dc2.product_ean AND dc1.created_at = dc2.max_created_at) as dc1'), 'products.ean', '=', 'dc1.product_ean')
                     ->leftJoin('product_user', 'products.id', '=', 'product_user.product_id')
                     // ->leftJoin(DB::raw("(SELECT * FROM product_user WHERE user_id = ?) as product_user"), 'products.id', '=', 'product_user.product_id')
-                    ->select('products.*', 'dc1.quantity', 'dc1.price', 'product_user.user_id')
+                    ->select('products.*', 'product_user.user_id')
                     ->setBindings([$userId])
                     ->get(),   
                        

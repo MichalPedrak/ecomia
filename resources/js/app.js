@@ -1,6 +1,7 @@
 import './bootstrap';
 import '../css/app.css';
-import 'primevue/resources/themes/aura-light-green/theme.css'
+import '../../node_modules/primevue/resources/themes/aura-light-green/theme.css'
+
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
